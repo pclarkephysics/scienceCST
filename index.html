@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Romero Science & CST Curriculum Mapper</title>
+<style>
+:root{
+ --navy:#17324d;--teal:#0f6b68;--gold:#c79a2b;--cream:#f5f2e9;--ink:#1f2933;--muted:#65727e;
+ --card:#fff;--line:#dce3e8;--good:#1f7a52;--warn:#a66b00;--soft:#eef6f5;
+ --shadow:0 10px 28px rgba(23,50,77,.08);--radius:16px
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:#f6f8fa}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{background:linear-gradient(135deg,var(--navy),#245a69);color:#fff;padding:22px 28px;position:sticky;top:0;z-index:20;box-shadow:0 4px 18px #0002}
+.brand{display:flex;gap:15px;align-items:center}.crest{width:48px;height:48px;border-radius:50%;background:var(--gold);display:grid;place-items:center;color:#fff;font-size:25px;font-weight:800}
+h1{font-size:22px;margin:0}.subtitle{opacity:.82;font-size:13px;margin-top:3px}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin-top:17px}.navbtn{border:1px solid #ffffff33;background:#ffffff12;color:#fff;padding:9px 13px;border-radius:10px}.navbtn.active,.navbtn:hover{background:#fff;color:var(--navy)}
+main{max-width:1500px;margin:auto;padding:24px}
+.page{display:none}.page.active{display:block}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);margin-bottom:20px}
+.hero h2{margin:0 0 8px;font-size:30px}.hero p{color:var(--muted);max-width:850px;line-height:1.55}
+.search{display:flex;gap:10px;margin-top:18px}.search input{flex:1;padding:14px 16px;border:1px solid var(--line);border-radius:12px;font-size:16px}
+.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--teal);color:#fff;font-weight:650}.btn.secondary{background:#e9eff2;color:var(--navy)}.btn.gold{background:var(--gold)}.btn.danger{background:#a94343}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+.principle{border-top:5px solid var(--teal);min-height:220px}.principle .icon{font-size:28px}.principle button{margin-top:12px}
+.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:750;background:#edf2f5;color:var(--navy);margin:2px}
+.badge.high{background:#dff3e9;color:#16603e}.badge.medium{background:#fff0c9;color:#7b5700}.badge.low{background:#eee;color:#666}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.controls label{font-size:12px;font-weight:700;color:var(--muted)}select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.results{display:grid;gap:13px}.mapping{border-left:5px solid var(--teal)}.mapping .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.stars{color:var(--gold);letter-spacing:1px;font-size:18px}.mapping details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.mapping summary{font-weight:700;cursor:pointer}
+.chain{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.chain div{background:var(--soft);padding:10px;border-radius:9px;font-size:12px}.chain b{display:block;color:var(--teal);font-size:10px;margin-bottom:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi strong{font-size:28px;display:block;color:var(--navy)}
+.heat{overflow:auto}.heat table{border-collapse:separate;border-spacing:4px;min-width:950px}.heat th{font-size:11px;min-width:100px}.heat td{height:55px;text-align:center;border-radius:8px;font-weight:800;cursor:pointer}.s0{background:#f0f2f3;color:#aaa}.s1{background:#e8ecef;color:#6d757c}.s2{background:#fff0c9;color:#7b5700}.s3{background:#dff3e9;color:#16603e}.s4{background:#bde6d1;color:#075334}.s5{background:#83cfaa;color:#043e26}
+.modal{position:fixed;inset:0;background:#06152199;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modalbox{background:#fff;border-radius:18px;max-width:950px;width:100%;max-height:90vh;overflow:auto;padding:25px;box-shadow:0 25px 80px #0005}
+.close{float:right;border:0;background:#eef2f4;border-radius:8px;padding:7px 10px}
+.quote{border-left:4px solid var(--gold);padding:12px 15px;background:#fffaf0;margin:9px 0;font-style:italic}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:10px;padding:12px}
+footer{padding:30px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:900px){.grid2,.controls,.kpis{grid-template-columns:1fr 1fr}.chain{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){main{padding:12px}.grid2,.controls,.kpis{grid-template-columns:1fr}.search{flex-direction:column}.chain{grid-template-columns:1fr}header{padding:16px}.hero h2{font-size:24px}}
+@media print{header,nav,.no-print{display:none!important}.page{display:block!important}.card{box-shadow:none;break-inside:avoid}body{background:#fff}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="crest">✦</div><div><h1>Romero Science & CST Curriculum Mapper</h1><div class="subtitle">St Oscar Romero Catholic School & Sixth Form · Science-first curriculum planning</div></div></div>
+ <nav>
+  <button class="navbtn active" data-page="home">Dashboard</button>
+  <button class="navbtn" data-page="explore">Curriculum Explorer</button>
+  <button class="navbtn" data-page="cst">CST Principles</button>
+  <button class="navbtn" data-page="search">CST Search</button>
+  <button class="navbtn" data-page="heat">Heatmap</button>
+  <button class="navbtn" data-page="diagnostic">What have I missed?</button>
+  <button class="navbtn" data-page="saved">My Favourites</button>
+  <button class="navbtn" data-page="data">Teacher Data</button>
+ </nav>
+</header>
+<main>
+<section id="home" class="page active">
+ <div class="hero">
+  <h2>Where does CST naturally fit into what I am already teaching?</h2>
+  <p>Explore authentic links between Science curriculum content and the school's eight Catholic Social Teaching principles. The app deliberately distinguishes strong conceptual connections from weak or forced keyword matches.</p>
+  <div class="search"><input id="quickSearch" placeholder="What are you teaching? e.g. climate change, genetic engineering, nuclear power…"><button class="btn" onclick="runSearch()">Find connections</button></div>
+ </div>
+ <div class="kpis">
+  <div class="card kpi"><strong id="statMaps">0</strong><span>curated CST mappings</span></div>
+  <div class="card kpi"><strong>8</strong><span>CST principles</span></div>
+  <div class="card kpi"><strong id="statQual">0</strong><span>Science qualifications</span></div>
+  <div class="card kpi"><strong id="statSaved">0</strong><span>saved items</span></div>
+ </div>
+ <div style="height:18px"></div>
+ <div class="grid">
+  <div class="card"><h3>⚡ Start with your lesson</h3><p class="muted">Select a qualification and topic, then see the strongest CST opportunities first.</p><button class="btn" onclick="showPage('explore')">Open Curriculum Explorer</button></div>
+  <div class="card"><h3>✦ Start with CST</h3><p class="muted">Choose a CST principle and find Science topics where it naturally belongs.</p><button class="btn" onclick="showPage('cst')">Explore CST</button></div>
+  <div class="card"><h3>⚖ Ethical dilemma</h3><p class="muted">Turn a strong Science/CST connection into a balanced classroom discussion.</p><button class="btn gold" onclick="openDilemma()">Generate dilemma</button></div>
+  <div class="card"><h3>🧭 Department view</h3><p class="muted">See which CST principles are strongly represented across the current database.</p><button class="btn secondary" onclick="showPage('heat')">Open heatmap</button></div>
+ </div>
+</section>
+
+<section id="explore" class="page">
+ <div class="hero"><h2>Curriculum Explorer</h2><p>Use the curriculum hierarchy to find meaningful CST opportunities. Major curriculum structures are based on the supplied specifications; individual specification statements can be added through JSON/TXT import.</p></div>
+ <div class="controls">
+  <div><label>Board</label><select id="board"></select></div>
+  <div><label>Qualification</label><select id="qual"></select></div>
+  <div><label>Subject</label><select id="subject"></select></div>
+  <div><label>Topic / Unit</label><select id="topic"></select></div>
+ </div>
+ <div id="exploreResults"></div>
+</section>
+
+<section id="cst" class="page">
+ <div class="hero"><h2>CST Principle Explorer</h2><p>The school's eight-principle framework is used as the authoritative CST layer. Quotations shown here are labelled as school-provided material.</p></div>
+ <div id="principles" class="grid"></div>
+</section>
+
+<section id="search" class="page">
+ <div class="hero"><h2>Search Science ↔ CST</h2><p>Search by topic, curriculum phrase, ethical issue or CST principle. The local inference engine expands terms such as climate change into related concepts before ranking curated mappings.</p>
+ <div class="search"><input id="searchBox" placeholder="e.g. Which CST principles fit medical imaging?"><button class="btn" onclick="runSearch('searchBox')">Search</button></div></div>
+ <div id="searchResults"></div>
+</section>
+
+<section id="heat" class="page">
+ <div class="hero"><h2>CST Coverage Heatmap</h2><p>Click a cell to inspect the mappings behind it. This is a view of the current curated dataset, not a judgement that every topic should have a CST connection.</p></div>
+ <div class="controls">
+  <div><label>Level</label><select id="heatLevel"><option value="">All</option><option>GCSE</option><option>A Level</option><option>BTEC</option></select></div>
+  <div><label>Subject</label><select id="heatSubject"><option value="">All</option><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Applied Science</option></select></div>
+ </div>
+ <div id="heatmap" class="heat"></div>
+</section>
+
+<section id="diagnostic" class="page">
+ <div class="hero"><h2>What have I missed?</h2><p>Choose a qualification to see where strong CST opportunities are concentrated and which principles currently have relatively few strong mappings. Low coverage is not a curriculum deficiency.</p>
+ <div style="max-width:500px"><select id="diagQual"></select></div></div>
+ <div id="diagResults"></div>
+</section>
+
+<section id="saved" class="page">
+ <div class="hero"><h2>My Favourites</h2><p>Saved locally in this browser. Use Teacher Data to export them as JSON.</p></div>
+ <div id="savedResults"></div>
+</section>
+
+<section id="data" class="page">
+ <div class="hero"><h2>Teacher Data & Import</h2><p>Create your own mappings, approve system suggestions and export/import your local work. No data leaves this browser.</p></div>
+ <div class="grid2">
+  <div class="card"><h3>Create a teacher mapping</h3>
+   <label>Science topic<input id="newTopic" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;margin:5px 0 10px"></label>
+   <label>CST principle<select id="newCst" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;margin:5px 0 10px"></select></label>
+   <label>Why it fits<textarea id="newWhy"></textarea></label>
+   <button class="btn" onclick="createMapping()">Save teacher mapping</button>
+  </div>
+  <div class="card"><h3>Export / import</h3><p class="muted">Export favourites and teacher-created/approved mappings. Import the same JSON later on another browser.</p>
+   <button class="btn" onclick="exportData()">Export JSON</button>
+   <button class="btn secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+   <input id="importFile" type="file" accept=".json" hidden onchange="importData(event)">
+   <hr><h3>Specification text import</h3><p class="small">Paste or load TXT/CSV/JSON curriculum text. The app does not pretend to parse arbitrary PDFs locally.</p>
+   <input id="specFile" type="file" accept=".txt,.csv,.json" onchange="importSpec(event)">
+   <textarea id="specPaste" placeholder="Paste specification text here…"></textarea><button class="btn secondary" onclick="acceptSpecText()">Add imported curriculum text</button>
+  </div>
+ </div>
+</section>
+</main>
+<footer>Romero Science & CST Curriculum Mapper · Local-first teacher tool · Built for St Oscar Romero Catholic School & Sixth Form</footer>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modalbox"><button class="close" onclick="closeModal()">Close</button><div id="modalContent"></div></div></div>
+
+<script>
+const CST = [
+{id:'dignity',name:'Human Dignity',icon:'◉',short:'All human life has value. A human is someone, not something.',themes:['intrinsic human worth','dignity','respect','vulnerable people','people who have no voice','protecting life'],quotes:[
+'Aspire not to have more, but to be more',
+'A civilization of love is not sentimentality. It means working for justice among people, so that human dignity is respected.',
+'Let us not tire of preaching love, it is the force that will overcome the world'
+],scripture:'Isaiah 43:4 — “You are precious in my sight.”'},
+{id:'stewardship',name:'Stewardship',icon:'🌿',short:'Caring for the earth and life on it; living sustainably, responsibly and fairly.',themes:['environmental responsibility','sustainability','climate change','finite resources','biodiversity','pollution','energy use','future generations','Laudato Si’'],quotes:[
+'Each one of us is a new creature of God, and the fullness of creation comes when all of us form one human family.',
+'When we speak of injustice, and denounce it, they think we are playing politics. It is in the name of God’s just reign that we denounce the injustices of the earth.'
+],scripture:'Laudato Si’ — the earth as our common home.'},
+{id:'rights',name:'Human Rights',icon:'⚖',short:'Protect people’s rights, respect others and empower everyone to have their say.',themes:['rights','equality','access','discrimination','freedom','justice','healthcare','education','vulnerable people'],quotes:[
+'The Church does not accept violence, but she does not preach resignation either. She preaches the courage to love, to defend one’s rights, to fight for justice, but always inspired by love and defending human dignity.',
+'A church that does not provoke any crisis...what kind of gospel is that?'
+],scripture:'Justice, equality and the protection of vulnerable people.'},
+{id:'workers',name:'Rights of Workers',icon:'⚒',short:'The human person comes before profit; workers should be treated fairly and not exploited.',themes:['working conditions','exploitation','fair pay','child labour','employment','automation','technology and jobs','workplace safety','ethical production','supply chains'],quotes:[
+'Not only does society have to guarantee the rights of workers, but it also must protect their dignity. Work is a vocation, and the worker is not a machine, but a child of God.',
+'The workers who plough, sow, and harvest the land have a right to enjoy its fruits.',
+'Work is not a punishment; it is a gift, and those who work must be respected as collaborators with God in the act of creation.'
+],scripture:'Rerum Novarum — the dignity of work and the rights of workers.'},
+{id:'common',name:'Common Good',icon:'◎',short:'Work for the good of everyone: “us”, not simply “I”; share and protect resources.',themes:['community','public health','shared resources','collective responsibility','public policy','cooperation','social infrastructure','scientific progress for society'],quotes:[
+'Peace is not the product of terror or fear. Peace is the generous, tranquil contribution of all to the good of all.',
+'You cannot reap what you have not sown. How are we going to reap love in our community if we only sow hate?',
+'There are not two categories of people. There are not some who were born to have everything and leave others with nothing. God wants a Christian society, one in which we share the good things that God has given for all of us.'
+],scripture:'Luke 6:31 — “Treat others as you wish to be treated.”'},
+{id:'poor',name:'Preferential Option for the Poor',icon:'♥',short:'The needs of the poor and most vulnerable should be given top priority.',themes:['poverty','inequality','healthcare access','technology access','energy access','food security','clean water','environmental injustice','vulnerable communities'],quotes:[
+'It is not God’s will for some to have everything, and others to have nothing.',
+'This is Christ’s mission: to take the good news to the poor, to those who receive only bad news, to those who are always trampled by the powerful.',
+'The Church cannot be the Church of Jesus Christ unless she is the Church of the poor.'
+],scripture:'Priority for those on the margins and people whose needs are least easily met.'},
+{id:'solidarity',name:'Solidarity',icon:'◌',short:'Recognise our connection with one another and responsibility for others.',themes:['global responsibility','interdependence','international cooperation','pandemics','global health','climate change','scientific collaboration','global inequality'],quotes:[
+'There are many things that can only be seen through eyes that have cried.',
+'Those who have a voice must speak for those who are voiceless.',
+'Let us not tire of preaching love. Though we see that waves of violence succeed in drowning the fire of Christian love, love must win out, it is the only thing that can.'
+],scripture:'1 Corinthians 12:26 — “When one part suffers, all suffer.”'},
+{id:'participation',name:'Participation & Subsidiarity',icon:'◈',short:'Everyone should have a part to play and a genuine opportunity to have their voice heard.',themes:['participation','democratic decision-making','local communities','empowerment','scientific literacy','public engagement','who makes decisions?','citizen science'],quotes:[
+'Each one of you has to be God’s microphone',
+'It is not enough to be good. It is not enough to not do evil. There are many who say, “But I don’t kill, I don’t steal, I don’t do anything bad to anyone.” That’s not enough. You are still lacking a great deal. It is not enough to be good'
+],scripture:'Subsidiarity — decisions should be made at the lowest appropriate level rather than unnecessarily controlled by a distant authority.'}
+];
+
+const qualifications = [
+{board:'AQA',level:'GCSE',subject:'Biology',name:'GCSE Biology 8461',topics:['Cell biology','Organisation','Infection and response','Bioenergetics','Homeostasis and response','Inheritance, variation and evolution','Ecology','Key ideas']},
+{board:'AQA',level:'GCSE',subject:'Chemistry',name:'GCSE Chemistry 8462',topics:['Atomic structure and the periodic table','Bonding, structure, and the properties of matter','Quantitative chemistry','Chemical changes','Energy changes','The rate and extent of chemical change','Organic chemistry','Chemical analysis','Chemistry of the atmosphere','Using resources','Key ideas']},
+{board:'AQA',level:'GCSE',subject:'Physics',name:'GCSE Physics 8463',topics:['Energy','Electricity','Particle model of matter','Atomic structure','Forces','Waves','Magnetism and electromagnetism','Space physics','Key ideas']},
+{board:'AQA',level:'GCSE',subject:'Combined Science',name:'GCSE Combined Science: Trilogy 8464',topics:['Biology: Cell biology','Biology: Organisation','Biology: Infection and response','Biology: Bioenergetics','Biology: Homeostasis and response','Biology: Inheritance, variation and evolution','Biology: Ecology','Chemistry: Atomic structure and the periodic table','Chemistry: Bonding, structure, and the properties of matter','Chemistry: Quantitative chemistry','Chemistry: Chemical changes','Chemistry: Energy changes','Chemistry: Rate and extent of chemical change','Chemistry: Organic chemistry','Chemistry: Chemical analysis','Chemistry: Chemistry of the atmosphere','Chemistry: Using resources','Physics: Energy','Physics: Electricity','Physics: Particle model of matter','Physics: Atomic structure','Physics: Forces','Physics: Waves','Physics: Magnetism and electromagnetism']},
+{board:'AQA',level:'A Level',subject:'Biology',name:'AQA A-level Biology 7401/7402',topics:['3.1 Biological molecules','3.2 Cells','3.3 Organisms exchange substances with their environment','3.4 Genetic information, variation and relationships between organisms','3.5 Energy transfers in and between organisms','3.6 Organisms respond to changes in their internal and external environments','3.7 Genetics, populations, evolution and ecosystems','3.8 The control of gene expression']},
+{board:'AQA',level:'A Level',subject:'Chemistry',name:'AQA A-level Chemistry 7404/7405',topics:['3.1 Physical chemistry','3.2 Inorganic chemistry','3.3 Organic chemistry']},
+{board:'OCR',level:'A Level',subject:'Physics',name:'OCR A Level Physics A H556',topics:['Module 1 – Development of practical skills in physics','Module 2 – Foundations of physics','Module 3 – Forces and motion','Module 4 – Electrons, waves and photons','Module 5 – Newtonian world and astrophysics','Module 6 – Particles and medical physics']},
+{board:'Pearson',level:'BTEC',subject:'Applied Science',name:'BTEC National Applied Science (Extended Certificate) 610/3965/2',topics:['Unit 1: Principles and Applications of Biology','Unit 2: Principles and Applications of Chemistry','Unit 3: Principles and Applications of Physics','Unit 4: Practical Scientific Procedures and Techniques','Unit 5: Science Investigation Skills','Unit 6: Contemporary Issues in Science']}
+];
+
+const M = [];
+function add(id,qual,topic,cst,strength,type,why,science,impact,people,ethical,discussion,activity,keywords,quoteIndex=0){
+ const q=qualifications.find(x=>x.name===qual); const c=CST.find(x=>x.id===cst);
+ M.push({id,board:q.board,level:q.level,subject:q.subject,qualification:qual,topic,cst:cst,strength,type,why,science,impact,people,ethical,discussion,activity,keywords,quote:c?.quotes?.[quoteIndex]||''});
+}
+const Q={
+p:'GCSE Physics 8463', b:'GCSE Biology 8461', c:'GCSE Chemistry 8462', cb:'GCSE Combined Science: Trilogy 8464',
+ab:'AQA A-level Biology 7401/7402', ac:'AQA A-level Chemistry 7404/7405', op:'OCR A Level Physics A H556', bt:'BTEC National Applied Science (Extended Certificate) 610/3965/2'
+};
+// Energy resources
+add('p-energy-stew','GCSE Physics 8463','Energy','stewardship',5,'DIRECT','Energy choices affect finite resources, pollution, climate and the conditions inherited by future generations.','Energy resources; renewable and non-renewable resources','Resource depletion and environmental impact','communities; future generations','What responsibilities follow from using finite resources?','Compare two energy strategies against environmental, reliability and resource criteria.','energy resources,renewable,fossil fuels,climate,finite',0);
+add('p-energy-common','GCSE Physics 8463','Energy','common',4,'EXTENSION','Energy infrastructure and generation affect the whole community, not only individual consumers.','Energy generation and transfer','Energy security, cost and infrastructure','communities; households; public services','How should energy policy balance competing public needs?','Rank policy priorities for a fictional region.','energy,energy security,infrastructure,public policy',2);
+add('p-energy-poor','GCSE Physics 8463','Energy','poor',4,'EXTENSION','Access to affordable and reliable energy is uneven; energy policy can have disproportionate effects on vulnerable households.','Energy resources and efficiency','Energy poverty and unequal access','low-income households; vulnerable communities','Who should carry the costs of changing energy systems?','Evaluate an energy policy from three household perspectives.','energy access,poverty,inequality,efficiency',0);
+add('p-energy-solid','GCSE Physics 8463','Energy','solidarity',3,'EXTENSION','Energy and climate impacts cross national and generational boundaries and require cooperation.','Global energy systems and climate change','International and intergenerational effects','nations; communities; future generations','How should responsibility be shared?','Structured discussion using stakeholder cards.','climate,global,cooperation,future generations',0);
+add('p-radio-human','GCSE Physics 8463','Atomic structure','dignity',5,'EXTENSION','Applications of radiation in diagnosis and treatment raise questions about protecting and valuing people while using powerful technologies.','Ionising radiation; medical applications','Diagnosis and treatment versus risk','patients; families; healthcare workers','How should risk and benefit be balanced in medical decisions?','Risk-benefit case study.','radiation,medical imaging,radiotherapy,patients',1);
+add('p-radio-poor','GCSE Physics 8463','Atomic structure','poor',4,'EXTENSION','Access to advanced medical technologies can vary substantially between communities.','Medical applications of radiation','Unequal access to diagnosis and treatment','patients; poorer communities','How should scarce specialist healthcare resources be allocated?','Compare healthcare access scenarios.','medical,radiation,healthcare,access',0);
+add('p-electric-poor','GCSE Physics 8463','Electricity','poor',4,'EXTENSION','Reliable electricity supports healthcare, education, communications and basic living; unequal access can reinforce disadvantage.','Electrical power and energy transfer','Infrastructure and access','communities; schools; hospitals','Is access to electricity a social justice issue?','Map what depends on electricity in a community.','electricity,access,healthcare,education',0);
+add('p-workers','GCSE Physics 8463','Electricity','workers',3,'EXTENSION','Electrical engineering and infrastructure depend on safe working conditions and responsible professional practice.','Circuits, electrical power and infrastructure','Occupational risk and engineering responsibility','electricians; engineers; construction workers','How should safety be balanced against cost and deadlines?','Analyse a fictional safety decision.','electricity,engineering,safety,workers',0);
+add('p-waves-access','GCSE Physics 8463','Waves','participation',3,'EXTENSION','Communications technologies can enable participation and access to information, while unequal access can exclude people.','Waves; communications','Communication and digital inclusion','communities; people with disabilities','Who gets a voice when technology is unevenly available?','Design an inclusive communications service.','waves,communications,digital divide,access',0);
+add('p-space','GCSE Physics 8463','Space physics','stewardship',3,'EXTENSION','Space science and satellite systems raise questions about responsible use of technology, resources and the environment.','Satellites and space systems','Orbital congestion and resource use','global community; future generations','What does responsible use of near-Earth space mean?','Debate a satellite policy.','space,satellites,resources,technology',0);
+// Biology
+add('b-infection','GCSE Biology 8461','Infection and response','common',5,'DIRECT','Public health depends on collective action, prevention and access to effective treatment.','Pathogens, disease, prevention and treatment','Population health','whole communities; vulnerable people','How should individual choices balance public health?','Build a public-health response plan.','infection,vaccination,public health,pathogens',2);
+add('b-infection-poor','GCSE Biology 8461','Infection and response','poor',5,'DIRECT','Disease burden and access to prevention and treatment are unequally distributed; vulnerable communities can be disproportionately affected.','Pathogens, vaccination, antibiotics','Unequal disease burden and healthcare access','poorer communities; developing countries','How should health resources be prioritised?','Compare intervention options under a fixed budget.','disease,healthcare,poverty,vaccination',1);
+add('b-genetics','GCSE Biology 8461','Inheritance, variation and evolution','dignity',4,'EXTENSION','Genetic technologies can affect decisions about health, reproduction and how society values people.','Inheritance and genetic variation','Screening, diagnosis and genetic technologies','patients; families; people with inherited conditions','How should genetic information be used?','Ethical case study with competing values.','genetics,screening,inherited disease,dignity',1);
+add('b-ecology','GCSE Biology 8461','Ecology','stewardship',5,'DIRECT','Ecosystems, biodiversity and resource use provide a direct context for care of the natural world.','Ecology; ecosystems; biodiversity','Habitat loss and conservation','species; communities; future generations','What responsibilities do humans have towards ecosystems?','Conservation strategy for a local habitat.','ecology,biodiversity,conservation,habitat',0);
+add('b-bioenergy','GCSE Biology 8461','Bioenergetics','stewardship',3,'EXTENSION','Photosynthesis underpins food production and links directly to the use and management of biological resources.','Photosynthesis and biomass','Food production and land use','farmers; communities; ecosystems','How should land be used sustainably?','Compare land-use options.','photosynthesis,food,agriculture,resources',0);
+add('b-homeo','GCSE Biology 8461','Homeostasis and response','dignity',4,'EXTENSION','Understanding human regulation supports healthcare and raises questions about caring for people whose bodies cannot maintain normal conditions unaided.','Homeostasis; nervous and hormonal coordination','Medical treatment and support','patients; carers; healthcare professionals','How should society support people whose health needs are complex?','Patient case study.','homeostasis,health,care,patients',1);
+add('ab-genetics','AQA A-level Biology 7401/7402','3.4 Genetic information, variation and relationships between organisms','dignity',5,'DIRECT','Genetic information and technologies can affect human identity, health, reproduction and decisions about inherited conditions.','Genetic information; variation; relationships','Genetic testing and intervention','patients; families; future generations','What ethical limits should apply to genetic technologies?','Evidence-led ethics seminar.','genetics,genetic technology,identity,health',1);
+add('ab-ecosystems','AQA A-level Biology 7401/7402','3.7 Genetics, populations, evolution and ecosystems','stewardship',5,'DIRECT','Population ecology and ecosystems provide a strong scientific basis for considering biodiversity, conservation and human impact.','Populations, ecosystems, biodiversity','Conservation and environmental change','ecosystems; species; communities','How should human needs be balanced with ecological integrity?','Conservation planning task.','ecosystems,populations,biodiversity,conservation',0);
+add('ab-health','AQA A-level Biology 7401/7402','3.6 Organisms respond to changes in their internal and external environments','common',4,'EXTENSION','Understanding physiological responses supports public health and collective decisions about disease prevention and treatment.','Response systems; homeostasis','Public health and healthcare','patients; communities','When should individual liberty give way to public-health measures?','Structured public-health debate.','homeostasis,health,public health',2);
+// Chemistry
+add('c-atmo','GCSE Chemistry 8462','Chemistry of the atmosphere','stewardship',5,'DIRECT','Atmospheric chemistry provides a direct route into pollution, climate change and responsibility for the common home.','Atmospheric pollutants and greenhouse gases','Climate and air quality','communities; ecosystems; future generations','How should environmental costs influence industrial choices?','Compare emissions scenarios.','atmosphere,pollution,climate,greenhouse gases',0);
+add('c-atmo-poor','GCSE Chemistry 8462','Chemistry of the atmosphere','poor',4,'EXTENSION','Air pollution and climate impacts can fall disproportionately on communities with fewer resources to avoid or adapt to them.','Atmospheric pollutants','Environmental inequality','vulnerable communities','Who bears the costs of pollution?','Stakeholder analysis of an industrial site.','pollution,inequality,environmental justice',0);
+add('c-resources','GCSE Chemistry 8462','Using resources','stewardship',5,'DIRECT','Extraction, recycling, finite resources and sustainable materials are directly connected to responsible stewardship.','Resources, extraction, recycling','Resource depletion and waste','future generations; communities; ecosystems','How should we decide whether a material is sustainable?','Life-cycle comparison of materials.','resources,recycling,extraction,sustainability',0);
+add('c-resources-workers','GCSE Chemistry 8462','Using resources','workers',4,'EXTENSION','Extraction and supply chains involve working conditions, occupational safety and the distribution of economic benefits.','Mining, extraction and industrial processes','Supply chains and workplace conditions','miners; factory workers; communities','Can a cheap material be ethical if its supply chain exploits workers?','Supply-chain investigation.','mining,workers,supply chain,safety',0);
+add('c-organic','GCSE Chemistry 8462','Organic chemistry','stewardship',4,'EXTENSION','Organic compounds underpin fuels, plastics and many products, creating opportunities to examine pollution, resource use and sustainable alternatives.','Hydrocarbons; polymers','Plastics, fuels and waste','communities; ecosystems','How should society balance convenience with environmental cost?','Plastic life-cycle challenge.','plastics,polymers,fuel,waste',0);
+add('c-medicine','GCSE Chemistry 8462','Chemical analysis','common',3,'EXTENSION','Chemical analysis supports quality control and safe medicines, food and environmental monitoring.','Chemical analysis','Safety and public protection','patients; consumers; communities','How much analytical evidence is enough before a product is trusted?','Forensic/quality-control scenario.','analysis,medicine,safety,public health',2);
+add('ac-green','AQA A-level Chemistry 7404/7405','3.3 Organic chemistry','stewardship',4,'EXTENSION','Organic chemistry supports discussion of fuels, polymers, synthesis and the environmental consequences of chemical manufacture.','Organic compounds; polymers; synthesis','Green chemistry and sustainable production','ecosystems; workers; consumers','What makes a chemical process genuinely sustainable?','Evaluate competing synthesis routes.','organic,polymers,green chemistry,synthesis',0);
+add('ac-inorg','AQA A-level Chemistry 7404/7405','3.2 Inorganic chemistry','workers',3,'EXTENSION','Mining, extraction and processing of inorganic materials involve workers, communities and environmental impacts.','Metals, transition metals, extraction','Supply chains and resource extraction','workers; mining communities','What responsibilities do companies have beyond profit?','Ethical supply-chain case study.','metals,mining,workers,resources',1);
+add('ac-physical','AQA A-level Chemistry 7404/7405','3.1 Physical chemistry','common',3,'EXTENSION','Energy, electrochemistry and industrial chemistry underpin technologies whose benefits and costs are distributed across society.','Energetics, kinetics, electrochemistry','Industrial and energy applications','communities; consumers','How should society evaluate technological trade-offs?','Technology trade-off matrix.','energetics,electrochemistry,industry,technology',2);
+// OCR Physics
+add('op-thermal','OCR A Level Physics A H556','Module 5 – Newtonian world and astrophysics','stewardship',4,'EXTENSION','Thermal physics provides a route into energy use, efficiency and the environmental consequences of technological systems.','Thermal physics','Energy efficiency and resource use','future generations; communities','What does responsible energy use require?','Efficiency policy comparison.','thermal,energy,efficiency,resources',0);
+add('op-astro','OCR A Level Physics A H556','Module 5 – Newtonian world and astrophysics','stewardship',3,'EXTENSION','Astrophysics can prompt reflection on the scale of creation and responsible use of scientific resources, while satellite technology raises stewardship questions.','Astrophysics; cosmology','Technology, resources and creation','humanity; future generations','How should scientific exploration be balanced with responsible resource use?','Mission-design ethics task.','astrophysics,space,technology,resources',0);
+add('op-medical','OCR A Level Physics A H556','Module 6 – Particles and medical physics','dignity',5,'DIRECT','Medical imaging and related technologies place human wellbeing at the centre of decisions about diagnosis, risk and treatment.','Medical imaging and radiation','Diagnosis and treatment','patients; clinicians','How should risk and benefit be balanced?','Clinical decision case study.','medical imaging,radiation,patients,diagnosis',1);
+add('op-electromag','OCR A Level Physics A H556','Module 6 – Particles and medical physics','common',3,'EXTENSION','Electromagnetic technologies underpin communication, infrastructure and healthcare systems that serve society.','Electromagnetism','Technology and infrastructure','communities; public services','How should public investment in science and technology be prioritised?','Public funding simulation.','electromagnetism,technology,infrastructure',2);
+// BTEC
+add('bt-bio','BTEC National Applied Science (Extended Certificate) 610/3965/2','Unit 1: Principles and Applications of Biology','dignity',4,'EXTENSION','Applied biology connects cell structure and function to health, disease diagnosis and treatment, creating opportunities to discuss respect for people and vulnerable patients.','Cells, tissues, biological molecules, enzymes','Health and disease applications','patients; families; healthcare workers','How should scientific knowledge be used in caring for people?','Applied-health case study.','cells,disease,health,diagnosis',1);
+add('bt-chem','BTEC National Applied Science (Extended Certificate) 610/3965/2','Unit 2: Principles and Applications of Chemistry','stewardship',4,'EXTENSION','Applied chemistry includes commercial reactions, polymers and environmental problems, providing a strong route into sustainable chemical practice.','Commercial reactions; polymers; environmental problems','Industrial chemistry and sustainability','workers; consumers; ecosystems','What responsibilities accompany industrial chemical production?','Green chemistry audit.','polymers,combustion,environment,industry',0);
+add('bt-phys','BTEC National Applied Science (Extended Certificate) 610/3965/2','Unit 3: Principles and Applications of Physics','workers',3,'EXTENSION','Applied physics is used in transportation, construction and electrical systems, where safety and professional responsibility matter.','Waves, forces, transportation and circuits','Engineering safety and public infrastructure','engineers; construction workers; public','How should safety influence engineering decisions?','Engineering risk assessment.','forces,transport,circuits,safety',0);
+add('bt-prac','BTEC National Applied Science (Extended Certificate) 610/3965/2','Unit 4: Practical Scientific Procedures and Techniques','workers',4,'DIRECT','Laboratory practice explicitly involves health and safety assessment and professional practice, providing a direct route into the dignity and rights of workers.','Practical procedures; laboratory safety','Safe working environments','technicians; students; laboratory workers','Who is responsible when a workplace is unsafe?','Laboratory risk assessment.','laboratory,safety,workers,professional practice',0);
+add('bt-contemp','BTEC National Applied Science (Extended Certificate) 610/3965/2','Unit 6: Contemporary Issues in Science','participation',4,'DIRECT','Evaluating scientific information and its validity supports informed participation in decisions affecting society.','Reliability of scientific information','Scientific literacy and public decision-making','citizens; communities','What information should citizens demand before making a public decision?','Source-evaluation challenge.','science communication,reliability,evidence,participation',0);
+
+const aliases={
+'climate change':['climate','atmosphere','energy resources','ecology','chemistry of the atmosphere','stewardship','solidarity'],
+'genetic engineering':['genetic','genetics','gene','inheritance','genetic information','dignity'],
+'medical physics':['medical','radiation','imaging','patients','medical physics','dignity'],
+'nuclear power':['nuclear','atomic structure','energy resources','radiation','stewardship'],
+'vaccination':['vaccination','infection','public health','common good','poor'],
+'energy resources':['energy','energy resources','renewable','fossil','stewardship','poor','common'],
+'workers':['workers','safety','employment','mining','engineering','rights of workers'],
+'medical ethics':['medical','dignity','healthcare','patients','rights'],
+'ecosystems':['ecology','ecosystem','biodiversity','stewardship'],
+'pollution':['pollution','atmosphere','stewardship','common','poor']
+};
+function scoreQuery(q,m){
+ let s=0,t=q.toLowerCase();
+ const terms=(aliases[t]||t.split(/\W+/)).filter(Boolean);
+ const hay=(m.topic+' '+m.why+' '+m.science+' '+m.impact+' '+m.people+' '+m.ethical+' '+m.keywords+' '+CST.find(c=>c.id===m.cst).name).toLowerCase();
+ terms.forEach(x=>{if(hay.includes(x.toLowerCase()))s+=2});
+ if(hay.includes(t))s+=5;
+ return s;
+}
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function badge(n){return `<span class="badge ${n>=4?'high':n===3?'medium':'low'}">${n>=5?'VERY HIGH':n>=4?'HIGH':n===3?'MEDIUM':'LOW'}</span>`}
+function mapCard(m){
+ const c=CST.find(x=>x.id===m.cst);
+ const fav=isFav(m.id);
+ return `<div class="card mapping">
+ <div class="top"><div><span class="badge">${m.level}</span><span class="badge">${m.subject}</span><span class="badge">${m.type}</span><h3>${c.icon} ${c.name}</h3><div class="small">${m.qualification} · ${m.topic}</div></div>
+ <div style="text-align:right"><div class="stars">${stars(m.strength)}</div>${badge(m.strength)}</div></div>
+ <p><b>WHY IT FITS:</b> ${m.why}</p>
+ <div class="chain">
+  <div><b>SCIENCE</b>${m.science}</div><div><b>APPLICATION / CONSEQUENCE</b>${m.impact}</div><div><b>PEOPLE / CREATION</b>${m.people}</div><div><b>ETHICAL QUESTION</b>${m.ethical}</div><div><b>CLASSROOM</b>${m.activity}</div>
+ </div>
+ <details><summary>Show discussion, source and Romero link</summary>
+  <p><b>Discussion:</b> ${m.discussion}</p>
+  ${m.quote?`<div class="quote"><span class="small">SCHOOL-PROVIDED QUOTATION</span><br>“${m.quote}”</div>`:''}
+  <p class="small"><b>Source:</b> ${m.qualification} · Topic: ${m.topic}</p>
+ </details>
+ <div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">
+  <button class="btn" onclick="teach('${m.id}')">Teach this tomorrow</button>
+  <button class="btn secondary" onclick="toggleFav('${m.id}')">${fav?'★ Saved':'☆ Save'}</button>
+  <button class="btn secondary" onclick="printMapping('${m.id}')">Print</button>
+ </div>
+ </div>`;
+}
+function showPage(id){
+ document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));
+ document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ if(id==='heat')renderHeat(); if(id==='saved')renderSaved(); if(id==='diagnostic')renderDiag();
+}
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function init(){
+ document.getElementById('statMaps').textContent=M.length;
+ document.getElementById('statQual').textContent=qualifications.length;
+ updateSaved();
+ renderPrinciples(); setupExplorer(); setupData();
+}
+function fillSelect(el,arr,placeholder='All'){
+ el.innerHTML='<option value="">'+placeholder+'</option>'+[...new Set(arr)].sort().map(x=>`<option>${x}</option>`).join('');
+}
+function setupExplorer(){
+ fillSelect(board,[...new Set(qualifications.map(q=>q.board))],'All boards');
+ const b=document.getElementById('board'),q=document.getElementById('qual'),s=document.getElementById('subject'),t=document.getElementById('topic');
+ b.onchange=()=>{fillSelect(q,qualifications.filter(x=>!b.value||x.board===b.value).map(x=>x.name),'All qualifications');fillSelect(s,[], 'All subjects');fillSelect(t,[],'All topics');renderExplore()};
+ q.onchange=()=>{const qs=qualifications.filter(x=>!q.value||x.name===q.value);fillSelect(s,qs.map(x=>x.subject),'All subjects');fillSelect(t,qs.flatMap(x=>x.topics),'All topics');renderExplore()};
+ s.onchange=()=>{const qs=qualifications.filter(x=>(!q.value||x.name===q.value)&&(!s.value||x.subject===s.value));fillSelect(t,qs.flatMap(x=>x.topics),'All topics');renderExplore()};
+ t.onchange=renderExplore; renderExplore();
+}
+function renderExplore(){
+ const b=board.value,q=qual.value,s=subject.value,t=topic.value;
+ const qs=qualifications.filter(x=>(!b||x.board===b)&&(!q||x.name===q)&&(!s||x.subject===s));
+ let ms=M.filter(m=>qs.some(x=>x.name===m.qualification)&&(!t||m.topic===t)).sort((a,b)=>b.strength-a.strength);
+ document.getElementById('exploreResults').innerHTML=ms.length?`<div class="results">${ms.map(mapCard).join('')}</div>`:`<div class="card"><h3>No curated mapping yet</h3><p class="muted">This is a deliberate result: not every curriculum point has a strong CST connection. Try a broader topic, or create a teacher mapping.</p></div>`;
+}
+function renderPrinciples(){
+ document.getElementById('principles').innerHTML=CST.map(c=>`<div class="card principle"><div class="icon">${c.icon}</div><h3>${c.name}</h3><p>${c.short}</p><div>${c.themes.slice(0,5).map(x=>`<span class="badge">${x}</span>`).join('')}</div><button class="btn" onclick="principle('${c.id}')">Find Science connections</button></div>`).join('');
+}
+function principle(id){
+ showPage('search'); const c=CST.find(x=>x.id===id);
+ document.getElementById('searchBox').value=c.name;
+ renderSearch(M.filter(m=>m.cst===id),`Connections for ${c.name}`);
+}
+function runSearch(inputId='quickSearch'){
+ const q=document.getElementById(inputId).value.trim(); if(!q)return;
+ showPage('search'); document.getElementById('searchBox').value=q;
+ const scored=M.map(m=>({...m,_score:scoreQuery(q,m)})).filter(x=>x._score>0).sort((a,b)=>b._score-b._score||b.strength-a.strength);
+ renderSearch(scored.slice(0,30),`Search results for “${q}”`);
+}
+function renderSearch(ms,title=''){
+ document.getElementById('searchResults').innerHTML=`<div class="card"><h3>${title}</h3><p class="small">${ms.length} relevant curated connection(s). Weak matches are deliberately filtered out.</p></div><div class="results">${ms.map(mapCard).join('')||'<div class="card"><h3>No strong match found</h3><p class="muted">Try a broader scientific concept or add a teacher-created mapping.</p></div>'}</div>`;
+}
+function setupData(){
+ document.getElementById('newCst').innerHTML=CST.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+function isFav(id){return JSON.parse(localStorage.getItem('romeroFavs')||'[]').includes(id)}
+function toggleFav(id){
+ let a=JSON.parse(localStorage.getItem('romeroFavs')||'[]');a=a.includes(id)?a.filter(x=>x!==id):[...a,id];localStorage.setItem('romeroFavs',JSON.stringify(a));updateSaved();renderExplore();renderSearch(M);
+}
+function updateSaved(){document.getElementById('statSaved').textContent=JSON.parse(localStorage.getItem('romeroFavs')||'[]').length}
+function renderSaved(){
+ const a=JSON.parse(localStorage.getItem('romeroFavs')||'[]'); const ms=M.filter(x=>a.includes(x.id));
+ document.getElementById('savedResults').innerHTML=ms.length?`<div class="results">${ms.map(mapCard).join('')}</div>`:'<div class="card"><h3>No favourites yet</h3><p class="muted">Use ☆ Save on any mapping.</p></div>';
+}
+function teach(id){
+ const m=M.find(x=>x.id===id),c=CST.find(x=>x.id===m.cst);
+ openModal(`<h2>Teach this tomorrow</h2><p><b>${m.qualification}</b> · ${m.topic}</p><div class="grid2">
+ <div class="card"><h3>Starter question</h3><p>${m.ethical}</p></div>
+ <div class="card"><h3>CST link</h3><p><b>${c.name}</b> — ${c.short}</p></div>
+ <div class="card"><h3>Key Science content</h3><p>${m.science}</p></div>
+ <div class="card"><h3>5-minute activity</h3><p>${m.activity}</p></div>
+ <div class="card"><h3>Discussion questions</h3><ol><li>${m.discussion}</li><li>Who benefits from the scientific development?</li><li>Who might bear its costs or risks?</li></ol></div>
+ <div class="card"><h3>Plenary</h3><p>In one sentence, explain the scientific idea and why the CST principle is relevant.</p></div>
+ </div>${m.quote?`<div class="quote"><span class="small">SCHOOL-PROVIDED QUOTATION</span><br>“${m.quote}”</div>`:''}`);
+}
+function openDilemma(){
+ const m=M[Math.floor(Math.random()*M.length)],c=CST.find(x=>x.id===m.cst);
+ openModal(`<h2>Ethical dilemma</h2><p><b>${m.topic}</b> · ${c.name}</p><div class="card"><h3>Dilemma</h3><p>${m.ethical}</p></div><div class="grid2" style="margin-top:12px"><div class="card"><h3>Scientific context</h3><p>${m.science}</p></div><div class="card"><h3>Social consequence</h3><p>${m.impact}</p></div><div class="card"><h3>People affected</h3><p>${m.people}</p></div><div class="card"><h3>Competing interests</h3><p>Safety · access · cost · innovation · environmental impact · individual choice · collective responsibility</p></div></div><p class="small">The aim is critical thinking rather than a single “correct” moral answer.</p>`);
+}
+function openModal(x){document.getElementById('modalContent').innerHTML=x;document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function renderHeat(){
+ const lev=document.getElementById('heatLevel').value,sub=document.getElementById('heatSubject').value;
+ const qs=qualifications.filter(q=>(!lev||q.level===lev)&&(!sub||q.subject===sub));
+ const topics=[...new Set(M.filter(m=>qs.some(q=>q.name===m.qualification)).map(m=>m.topic))].sort();
+ let h='<table><thead><tr><th>Topic</th>'+CST.map(c=>`<th>${c.name}</th>`).join('')+'</tr></thead><tbody>';
+ topics.forEach(t=>{h+=`<tr><th style="text-align:left">${t}</th>`;CST.forEach(c=>{const ms=M.filter(m=>m.topic===t&&m.cst===c.id&&qs.some(q=>q.name===m.qualification));const n=ms.length?Math.max(...ms.map(x=>x.strength)):0;h+=`<td class="s${n}" title="${n?stars(n):'No strong mapping'}" onclick="heatCell('${t.replace(/'/g,"\\'")}','${c.id}')">${n?stars(n):'—'}</td>`});h+='</tr>'});
+ h+='</tbody></table>';document.getElementById('heatmap').innerHTML=h;
+}
+document.getElementById('heatLevel').onchange=renderHeat;document.getElementById('heatSubject').onchange=renderHeat;
+function heatCell(topic,cst){renderSearch(M.filter(m=>m.topic===topic&&m.cst===cst),`${topic} ↔ ${CST.find(c=>c.id===cst).name}`);showPage('search')}
+function renderDiag(){
+ const name=document.getElementById('diagQual').value; if(!name)return;
+ const ms=M.filter(m=>m.qualification===name),counts=CST.map(c=>({c,n:ms.filter(m=>m.cst===c.id).reduce((a,m)=>a+m.strength,0),strong:ms.filter(m=>m.cst===c.id&&m.strength>=4).length})).sort((a,b)=>b.n-a.n);
+ const strong=ms.filter(m=>m.strength>=4).sort((a,b)=>b.strength-a.strength);
+ document.getElementById('diagResults').innerHTML=`<div class="grid2"><div class="card"><h3>Strongest opportunities</h3>${strong.slice(0,12).map(m=>`<p><b>${CST.find(c=>c.id===m.cst).name}</b> · ${m.topic} ${stars(m.strength)}</p>`).join('')||'<p class="muted">No strong mappings in current dataset.</p>'}</div><div class="card"><h3>Principles with fewer strong mappings</h3>${counts.filter(x=>x.strong<2).map(x=>`<p><b>${x.c.name}</b> — ${x.strong} strong mapping(s)</p>`).join('')||'<p>All principles have at least two strong mappings.</p>'}</div></div><div class="card" style="margin-top:15px"><p><b>Interpretation:</b> low coverage is not a deficiency in the Science curriculum. Some topics naturally provide much stronger CST opportunities than others.</p></div>`;
+}
+document.getElementById('diagQual').onchange=renderDiag;
+function setupDiag(){fillSelect(document.getElementById('diagQual'),qualifications.map(q=>q.name),'Choose qualification')}
+function createMapping(){
+ const topic=document.getElementById('newTopic').value.trim(),cst=document.getElementById('newCst').value,why=document.getElementById('newWhy').value.trim();
+ if(!topic||!why)return alert('Please provide a Science topic and explain why the CST connection is meaningful.');
+ const a=JSON.parse(localStorage.getItem('romeroTeacher')||'[]');a.push({id:'teacher-'+Date.now(),topic,cst,why,created:new Date().toISOString()});localStorage.setItem('romeroTeacher',JSON.stringify(a));
+ alert('Teacher mapping saved locally.');document.getElementById('newTopic').value='';document.getElementById('newWhy').value='';
+}
+function exportData(){
+ const payload={version:1,exported:new Date().toISOString(),favourites:JSON.parse(localStorage.getItem('romeroFavs')||'[]'),teacherMappings:JSON.parse(localStorage.getItem('romeroTeacher')||'[]'),importedCurriculum:JSON.parse(localStorage.getItem('romeroImported')||'[]')};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='romero-cst-teacher-data.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);localStorage.setItem('romeroFavs',JSON.stringify(x.favourites||[]));localStorage.setItem('romeroTeacher',JSON.stringify(x.teacherMappings||[]));localStorage.setItem('romeroImported',JSON.stringify(x.importedCurriculum||[]));updateSaved();alert('Teacher data imported.')}catch(err){alert('That file is not valid JSON.')}};r.readAsText(f)}
+function importSpec(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('specPaste').value=r.result};r.readAsText(f)}
+function acceptSpecText(){const text=document.getElementById('specPaste').value.trim();if(!text)return alert('Paste or load specification text first.');const a=JSON.parse(localStorage.getItem('romeroImported')||'[]');a.push({created:new Date().toISOString(),text:text.slice(0,200000)});localStorage.setItem('romeroImported',JSON.stringify(a));alert('Specification text stored locally. Use JSON export to preserve it.')}
+function printMapping(id){const m=M.find(x=>x.id===id);const c=CST.find(x=>x.id===m.cst);const w=window.open('','_blank');w.document.write(`<html><head><title>CST Mapping</title><style>body{font-family:Arial;padding:35px;max-width:850px;margin:auto}h1{color:#17324d}.box{padding:15px;border:1px solid #ddd;margin:12px 0}blockquote{border-left:4px solid #c79a2b;padding:10px}</style></head><body><h1>${c.name}</h1><p><b>${m.qualification}</b> · ${m.topic}</p><div class=box><b>Why it fits</b><p>${m.why}</p></div><div class=box><b>Science</b><p>${m.science}</p><b>Consequence</b><p>${m.impact}</p><b>People affected</b><p>${m.people}</p></div><div class=box><b>Ethical question</b><p>${m.ethical}</p><b>Classroom activity</b><p>${m.activity}</p></div>${m.quote?`<blockquote>School-provided quotation: “${m.quote}”</blockquote>`:''}</body></html>`);w.document.close();w.print()}
+setupDiag();init();
+</script>
+</body>
+</html>
